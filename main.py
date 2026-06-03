@@ -20,10 +20,9 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-# 🌐 CORS Configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"] if settings.PYTHON_ENV != "production" else settings.BACKEND_CORS_ORIGINS,
+    allow_origins=settings.BACKEND_CORS_ORIGINS if settings.PYTHON_ENV == "production" else ["http://localhost:5173", "http://localhost:3000", "http://127.0.0.1:5173", "http://127.0.0.1:3000"],
     allow_credentials=True,     # Critical for cookie-based authentication
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allow_headers=["Authorization", "Content-Type", "X-Requested-With", "Accept"],

@@ -28,6 +28,8 @@ class Settings(BaseSettings):
 
     CELERY_WORKER_BROKER_URL: str = os.getenv("CELERY_WORKER_BROKER_URL")
 
+    ALLOWED_ORIGINS: str = os.getenv("ALLOWED_ORIGINS", "https://task-manager-client-plum.vercel.app")
+
 
 
 

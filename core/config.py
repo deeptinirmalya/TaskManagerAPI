@@ -10,8 +10,6 @@ class Settings(BaseSettings):
     PASSWORD: str = os.getenv("PASSWORD")
 
     ALGORITHM: str = os.getenv("ALGORITHM", "HS256")
-
-    PYTHON_ENV: str = os.getenv("PYTHON_ENV", "development")
     DATABASE_URL: str = os.getenv("DATABASE_URL")
 
     ACCESS_TOKEN_EXPIRE_MINUTES_SHORT: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES_SHORT", 15))
@@ -28,6 +26,7 @@ class Settings(BaseSettings):
 
     CELERY_WORKER_BROKER_URL: str = os.getenv("CELERY_WORKER_BROKER_URL")
 
+    PYTHON_ENV: str = os.getenv("PYTHON_ENV", "production")
     ALLOWED_ORIGINS: str = os.getenv("ALLOWED_ORIGINS", "https://task-manager-client-plum.vercel.app")
 
 

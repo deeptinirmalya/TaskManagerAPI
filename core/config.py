@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     CELERY_WORKER_BROKER_URL: str = os.getenv("CELERY_WORKER_BROKER_URL")
 
     PYTHON_ENV: str = os.getenv("PYTHON_ENV", "production")
-    ALLOWED_ORIGINS: str = os.getenv("ALLOWED_ORIGINS", "https://task-manager-client-plum.vercel.app")
+    ALLOWED_ORIGINS: str = os.getenv("ALLOWED_ORIGINS", "https://master.deepti.qd.je")
 
 
 

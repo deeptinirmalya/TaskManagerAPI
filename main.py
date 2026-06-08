@@ -4,12 +4,15 @@ from api.api import api_router
 app = FastAPI()
 
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from api.api import api_router
 from core.config import settings
+from sqlalchemy.orm import Session
+from sqlalchemy import text
+from db.session import get_db
 
 
 
@@ -78,5 +81,17 @@ async def add_security_headers(request: Request, call_next):
 app.include_router(api_router, prefix="/api")
 
 @app.get("/")
-async def root():
-    return {"message": "Welcome to the API"}
+async def root(key: str, db: Session = Depends(get_db)):
+    try:
+        if key != settings.API_ACCESS_KEY:
+            raise HTTPException(status_code=401, detail="Invalid key")
+
+        db.execute(text("SELECT 1"))
+
+        return {"status": "ok"}
+
+    except HTTPException as http:
+        raise http
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+    

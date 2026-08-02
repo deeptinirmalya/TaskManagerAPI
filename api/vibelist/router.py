@@ -20,8 +20,6 @@ def view_creator_entries(_user_data: dict = Depends(token_required(allowed_roles
 
         response = requests.get(url, headers=headers, timeout=10)
 
-        print("Status Code:", response.status_code)
-
         response_data = response.json()
 
         return JSONResponse(
@@ -36,14 +34,13 @@ def view_creator_entries(_user_data: dict = Depends(token_required(allowed_roles
     except HTTPException as http:
         raise http
     except Exception as e:
-        print(f"ERROR: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
 @vibelist_router.get("/view-partner-entries")
 def view_partner_entries(_user_data: dict = Depends(token_required(allowed_roles=["user"]))):
     try:
-        url = "https://filestoresystem-deepti.onrender.com/stp/v1/partner_entries"
+        url = "https://filestoresystem-deepti.onrender.com/stp/v1/partners_entries"
 
         headers = {
             "MASTER-API-KEY": settings.MASTER_API_KEY
@@ -52,8 +49,6 @@ def view_partner_entries(_user_data: dict = Depends(token_required(allowed_roles
 
         response = requests.get(url, headers=headers, timeout=10)
 
-        print("Status Code:", response.status_code)
-
         response_data = response.json()
 
         return JSONResponse(
@@ -68,5 +63,4 @@ def view_partner_entries(_user_data: dict = Depends(token_required(allowed_roles
     except HTTPException as http:
         raise http
     except Exception as e:
-        print(f"ERROR: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")

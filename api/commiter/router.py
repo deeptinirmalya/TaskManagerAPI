@@ -27,4 +27,4 @@ def deepti(key: str):
     except HTTPException as httpe:
         raise httpe
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"ERROR: {e}")
+        raise HTTPException(status_code=500, detail=f"ERROR 11: {e}")

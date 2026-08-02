@@ -30,13 +30,16 @@ class Settings(BaseSettings):
     ALLOWED_ORIGINS: str = os.getenv("ALLOWED_ORIGINS", "https://master.deepti.qd.je")
 
 
+    TELEGRAM_WEBHOOK_KEY: str = os.getenv("TELEGRAM_WEBHOOK_KEY")
+
+    TELEGRAM_BOT_TOKEN: str = os.getenv("TELEGRAM_BOT_TOKEN")
+
+    TELEGRAM_USER_ID: int = int(os.getenv("TELEGRAM_USER_ID"))
 
 
+    MASTER_API_KEY: str = os.getenv("MASTER_API_KEY")
 
-
-
-
-
+    GEMINI_KEY: str = os.getenv("GEMINI_KEY")
 
 
 

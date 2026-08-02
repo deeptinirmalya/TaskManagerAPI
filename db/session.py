@@ -3,49 +3,31 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.exc import OperationalError, InternalError
 from core.config import settings
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # ============================= fro aiven ========================================================
-import os
+# import os
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-SSL_CA_PATH = os.path.join(BASE_DIR, "ca.pem")
-
-DATABASE_URL = settings.DATABASE_URL
-
-engine = create_engine(
-    DATABASE_URL,
-    pool_size=5,
-    max_overflow=0,
-    pool_recycle=3600,
-    pool_pre_ping=True,
-
-    connect_args={
-        "ssl": {
-            "ssl_ca": SSL_CA_PATH
-        }
-    }
-)
-
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = declarative_base()
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-# ===============================================================================================
+# BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# SSL_CA_PATH = os.path.join(BASE_DIR, "ca.pem")
 
 # DATABASE_URL = settings.DATABASE_URL
-
 
 # engine = create_engine(
 #     DATABASE_URL,
 #     pool_size=5,
 #     max_overflow=0,
 #     pool_recycle=3600,
-#     pool_pre_ping=True
+#     pool_pre_ping=True,
+
+#     connect_args={
+#         "ssl": {
+#             "ssl_ca": SSL_CA_PATH
+#         }
+#     }
 # )
 
 # SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -57,6 +39,29 @@ def get_db():
 #         yield db
 #     finally:
 #         db.close()
+# ===============================================================================================
+
+DATABASE_URL = settings.DATABASE_URL
+# DATABASE_URL = os.getenv("DATABASE_URL")
+
+
+engine = create_engine(
+    DATABASE_URL,
+    pool_size=5,
+    max_overflow=0,
+    pool_recycle=3600,
+    pool_pre_ping=True
+)
+
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 def test_db_connection():
     print(f"🔄 Testing connection to MySQL database standard host'...")

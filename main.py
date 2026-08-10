@@ -93,5 +93,6 @@ async def root(key: str, db: Session = Depends(get_db)):
     except HTTPException as http:
         raise http
     except Exception as e:
+        print(f"\nERROR:- {str(e)}\n")
         raise HTTPException(status_code=500, detail="Internal Server Error")
     

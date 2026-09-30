@@ -80,7 +80,24 @@ async def add_security_headers(request: Request, call_next):
 
 app.include_router(api_router, prefix="/api")
 
-@app.get("/")
+# @app.get("/")
+# async def root(key: str, db: Session = Depends(get_db)):
+#     try:
+#         if key != settings.API_ACCESS_KEY:
+#             raise HTTPException(status_code=401, detail="Invalid key")
+
+#         db.execute(text("SELECT 1"))
+
+#         return {"status": "ok"}
+
+#     except HTTPException as http:
+#         raise http
+#     except Exception as e:
+#         print(f"\nERROR:- {str(e)}\n")
+#         raise HTTPException(status_code=500, detail="Internal Server Error")
+
+
+@app.api_route("/", methods=["GET", "HEAD"])
 async def root(key: str, db: Session = Depends(get_db)):
     try:
         if key != settings.API_ACCESS_KEY:
@@ -95,4 +112,4 @@ async def root(key: str, db: Session = Depends(get_db)):
     except Exception as e:
         print(f"\nERROR:- {str(e)}\n")
         raise HTTPException(status_code=500, detail="Internal Server Error")
-    
+        

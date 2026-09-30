@@ -18,7 +18,7 @@ def extract_transaction_from_telegram(
 
     print("✅ transaction Task 1 sent to CloudAMQP task is  == extract_transaction_from_telegram")
 
-async def delever_mail(
+def delever_mail(
     authority_name,
     subject,
     body,
@@ -28,7 +28,7 @@ async def delever_mail(
     body_type="html",
     priority_level: int = 5,
 ):
-    client.send_task("extract_transaction_from_telegram",
+    client.send_task("send_email",
                     args=[authority_name, subject, body, receiver_emails, cc_emails, bcc_emails, body_type], priority = priority_level)
 
     print("✅ transaction Task 1 sent to CloudAMQP task is  == delever_mail")

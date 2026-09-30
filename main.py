@@ -1,34 +1,55 @@
+import secrets
+
 from fastapi import FastAPI
 from api.api import api_router
 
 app = FastAPI()
 
 
-from fastapi import FastAPI, HTTPException, Request, Depends
+from fastapi import FastAPI, HTTPException, Request, Depends, Header
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
+from pydantic import BaseModel, Field
 from api.api import api_router
 from core.config import settings
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from db.session import get_db
+from worker.task import delever_mail
 
 
 
+# app = FastAPI(
+#     title="master API",
+#     version="0.1.0",
+#     docs_url="/docs",
+#     redoc_url="/redoc",
+# )
 app = FastAPI(
     title="master API",
-    version="0.1.0",
-    docs_url="/docs",
-    redoc_url="/redoc",
+    version="0.2.0",
+    docs_url=None,
+    redoc_url=None,
 )
+
+
+class DeliverMailRequest(BaseModel):
+    authority_name: str
+    subject: str
+    body: str
+    receiver_emails: list[str]
+    cc_emails: list[str] | None = None
+    bcc_emails: list[str] | None = None
+    body_type: str = "html"
+    priority_level: int = Field(default=5, ge=0, le=10)
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.BACKEND_CORS_ORIGINS if settings.PYTHON_ENV == "production" else ["http://localhost:5173", "http://localhost:3000", "http://127.0.0.1:5173", "http://127.0.0.1:3000"],
     allow_credentials=True,     # Critical for cookie-based authentication
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
-    allow_headers=["Authorization", "Content-Type", "X-Requested-With", "Accept"],
+    allow_headers=["Authorization", "Content-Type", "X-Requested-With", "Accept", "X-API-Key"],
 )
 
 # 🛡️ Global Exception Handler (Standardized Responses)
@@ -80,7 +101,26 @@ async def add_security_headers(request: Request, call_next):
 
 app.include_router(api_router, prefix="/api")
 
-@app.get("/")
+
+@app.post("/api/send-email", status_code=202)
+def queue_email(
+    payload: DeliverMailRequest,
+    x_api_key: str = Header(..., alias="X-API-Key"),
+):
+    if not settings.MASTER_API_KEY or not secrets.compare_digest(
+        x_api_key, settings.MASTER_API_KEY
+    ):
+        raise HTTPException(status_code=403, detail="Invalid API key")
+
+    try:
+        delever_mail(**payload.model_dump())
+    except Exception as exc:
+        raise HTTPException(status_code=503, detail="Could not queue email task") from exc
+
+    return {"success": True, "message": "mail send to the api"}
+
+
+@app.api_route("/", methods=["GET", "HEAD"])
 async def root(key: str, db: Session = Depends(get_db)):
     try:
         if key != settings.API_ACCESS_KEY:

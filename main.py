@@ -17,6 +17,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text
 from db.session import get_db
 from worker.task import delever_mail
+from faker import Faker
+import random
 
 
 
@@ -32,6 +34,8 @@ app = FastAPI(
     docs_url=None,
     redoc_url=None,
 )
+
+fake = Faker("en_IN")
 
 
 class DeliverMailRequest(BaseModel):
@@ -117,6 +121,30 @@ def queue_email(
         raise HTTPException(status_code=503, detail="Could not queue email task") from exc
 
     return {"success": True, "message": "mail send to the api"}
+
+@app.get("/api/college-student-data", status_code=202)
+def fake_data(
+):
+    try:
+        name = fake.name()
+        mobile = random.randint(6000000000, 9999999999)
+        return {
+            "success": True,
+            "message": "fetched data",
+            "data": {
+                "name": name,
+                "mobile_no": mobile
+            },
+            "error": None
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"reason:- {str(e)}",
+            "data": None,
+            "error": str(e)
+        }
+    
 
 
 @app.api_route("/", methods=["GET", "HEAD"])

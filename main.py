@@ -128,12 +128,14 @@ def fake_data(
     try:
         name = fake.name()
         mobile = random.randint(6000000000, 9999999999)
+        roll_number = f"24CSEAIML{random.randint(100, 999)}"
         return {
             "success": True,
             "message": "fetched data",
             "data": {
                 "name": name,
-                "mobile_no": mobile
+                "mobile_no": mobile,
+                "roll_number": roll_number
             },
             "error": None
         }
